@@ -1,0 +1,19 @@
+@charset "UTF-8";
+.title{
+	text-align:left;
+}
+.title > a{
+	text-decoration: none;
+}
+.title > a{
+	color:black;
+}
+.title > a:hover{
+	color:purple;
+}
+.badge{
+	background-color: olive;
+}
+.vh-500{
+	height:500px;
+}
