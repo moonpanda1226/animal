@@ -2,19 +2,18 @@ package org.sh.dao;
 
 import java.util.List;
 
-import org.apache.ibatis.session.SqlSession;
 import org.sh.dto.BoardDTO;
 import org.sh.dto.CommentDTO;
+import org.sh.dto.SearchDTO;
 import org.sh.dto.WriteDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class BoardDAO extends AbstractDAO{
 
 
-	public List<BoardDTO> boardList(int pageNo){
-		return sqlSession.selectList("board.boardList", pageNo);
+	public List<BoardDTO> boardList(SearchDTO searchDTO){
+		return sqlSession.selectList("board.boardList", searchDTO);
 	}
 
 	public BoardDTO detail(int no) {
@@ -55,6 +54,10 @@ public class BoardDAO extends AbstractDAO{
 
 	public int likeUp(CommentDTO dto) {
 		return sqlSession.update("board.likeUp", dto);
+	}
+
+	public int search(String search) {
+		return sqlSession.selectOne("board.totalRecordCount",search);
 	}
 
 }

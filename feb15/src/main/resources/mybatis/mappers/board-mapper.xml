@@ -16,18 +16,39 @@
 		<result column="mname" property="mname" />
 		<result column="cip" property="cip" />
 	</resultMap>
-
-	<select id="totalRecordCount" resultType="Integer">
-		SELECT COUNT(*) FROM
-		boardview
+	<select id="totalRecordCount" parameterType="String" resultType="Integer">
+		SELECT COUNT(*) FROM board WHERE board_del='1'
+		<if test="search != null">
+		AND board_title LIKE CONCAT('%',#{search}, '%')
+		OR board_content LIKE CONCAT('%', #{search}, '%')
+		OR m.mname LIKE CONCAT('%', #{search}, '%')
+		</if>
+	</select>
+	<select id="boardListJSON" parameterType="int" resultType="boardDTO">
+		SELECT board_no,board_title,board_write as mname, board_date, board_count,comment
+		FROM boardview LIMIT #{pageNo},10
 	</select>
 
-	<select id="boardList" parameterType="Integer"
-		resultType="boardDTO">
-		SELECT board_no, board_title, board_write as mname,
-		board_date, board_count, comment
-		FROM boardview LIMIT #{pageNo}, 10
-	</select>
+<!-- 	<select id="totalRecordCount" resultType="Integer">
+		SELECT COUNT(*) FROM board WHERE board_del='1'
+	</select> -->
+
+<select id="boardList" parameterType="search" resultType="boardDTO">
+      select b.board_no, b.board_title, m.mname, 
+      if(date_format(current_timestamp(),'%Y-%m-%d') = date_format(b.board_date,'%Y-%m-%d'), 
+      date_format(b.board_date,'%h:%i'),date_format(b.board_date,'%m-%d')) AS board_date,
+      (select count(*) from visitcount where visitcount.board_no = b.board_no) AS board_count,
+      (select count(*) from comment where comment.board_no = b.board_no and comment.cdel = '1') AS comment 
+      from (board b join member m on(b.mno = m.mno)) 
+      where b.board_del = '1'
+      <if test="search != null">
+         AND b.board_title LIKE CONCAT('%', #{search}, '%') 
+         OR b.board_content LIKE CONCAT('%', #{search}, '%')
+         OR m.mname LIKE CONCAT('%', #{search}, '%') 
+      </if>
+      order by b.board_no desc
+      LIMIT #{pageNo}, 10
+   </select>
 
 	<select id="detail" resultType="boardDTO"
 		parameterType="Integer">
@@ -41,7 +62,7 @@
 	<insert id="write" parameterType="writeDTO">
 		INSERT INTO board (board_title, board_content, mno, board_ip)
 		VALUES (#{title}, #{content}, (SELECT mno FROM member WHERE
-		mid=#{mid}),#{ip});
+		mid=#{mid}),#{ip})
 		<selectKey resultType="Integer" keyProperty="board_no"
 			order="AFTER">
 			SELECT LAST_INSERT_ID()
@@ -90,6 +111,7 @@
          SELECT count(*) FROM dual
       </if>
    </insert>
+  
 
 	<!-- <insert id="countUP" parameterType="boardDTO"> <selectKey keyProperty="board_count" 
 		resultType="Integer" order="BEFORE"> SELECT count(*) FROM visitcount WHERE 

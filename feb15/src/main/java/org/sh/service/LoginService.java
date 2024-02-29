@@ -35,4 +35,9 @@ public class LoginService extends AbstractService{
 	
 		
 	}
+
+	public int join(MemberDTO join) {
+		return loginDAO.join(join);
+	}
+
 }

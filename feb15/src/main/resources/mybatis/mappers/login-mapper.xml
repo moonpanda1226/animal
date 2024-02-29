@@ -7,9 +7,9 @@
 
 	<select id="login" parameterType="loginDTO" resultType="loginDTO">
 	<![CDATA[
-		SELECT COUNT(*) as count, mname, mcount, mpw as pw
+		SELECT COUNT(*) as count, mname, mcount, AES_DECRYPT(UNHEX(mpw),'zzang9') AS pw
 		FROM member
-		WHERE mid=#{id} AND mpw=#{pw} AND mgrade > 4
+		WHERE mid=#{id} AND mgrade > 4
 		]]>
 	</select>
 	
@@ -24,4 +24,9 @@
 	<select id="getEmail" parameterType="String" resultType="String">
 		SELECT memail FROM member WHERE mid=#{id}
 	</select>
+	
+	<insert id="join" parameterType="memberDTO">
+		INSERT INTO member (mid, mpw, mname, memail)
+		VALUES (#{mid},HEX(AES_ENCRYPT(#{mpw},'zzang9')),#{mname},#{memail})
+	</insert>
 </mapper>

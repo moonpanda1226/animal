@@ -5,8 +5,8 @@ import java.util.List;
 import org.sh.dao.BoardDAO;
 import org.sh.dto.BoardDTO;
 import org.sh.dto.CommentDTO;
+import org.sh.dto.SearchDTO;
 import org.sh.dto.WriteDTO;
-import org.sh.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +17,8 @@ public class BoardService extends AbstractService{
 	private BoardDAO boardDAO;
 	
 	
-	public List<BoardDTO> boardList(int pageNo){
-		return boardDAO.boardList(pageNo);
+	public List<BoardDTO> boardList(SearchDTO searchDTO){
+		return boardDAO.boardList(searchDTO);
 	}
 
 	public BoardDTO detail(int no) {
@@ -79,5 +79,9 @@ public class BoardService extends AbstractService{
 	public int likeUp(CommentDTO dto ) {
 		return boardDAO.likeUp(dto);
 	}
-	
+
+	public int totalRecordCount(String search) {
+		return boardDAO.search(search);
+	}
+
 }

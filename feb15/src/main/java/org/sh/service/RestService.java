@@ -2,7 +2,6 @@ package org.sh.service;
 
 import org.sh.dao.RestDAO;
 import org.sh.dto.MemberDTO;
-import org.sh.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +33,10 @@ public class RestService extends AbstractService{
 
 	private String getEmail(String email) {
 		return restDAO.getEmail(email);
+	}
+
+	public int idCheck(String id) {
+		return restDAO.idCheck(id);
 	}
 	
 }

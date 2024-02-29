@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.sh.dto.BoardDTO;
 import org.sh.dto.CommentDTO;
+import org.sh.dto.SearchDTO;
 import org.sh.dto.WriteDTO;
 import org.sh.service.BoardService;
 import org.sh.util.Util;
@@ -36,15 +37,21 @@ public class BoardController {
 
 	// 페이징 추가하기 2024-02-20
 	@GetMapping({ "/board" })
-	public String board(@RequestParam(value = "pageNo", required = false) String no, HttpServletRequest request,
+	public String board(
+			@RequestParam(value = "pageNo", required = false) String no,
+			@RequestParam(value = "search", required = false) String search,
+			HttpServletRequest request,
 			Model model) {
+		
+		System.out.println(search);
+		
 		// pageNo가 오지 않는다면
 		int currentPageNo = 1;
 		if (util.str2Int(no) > 0) {// 여기 수정해주세요
 			currentPageNo = Integer.parseInt(no);
 		}
 		// 전체 글 수 totalRecordCount
-		int totalRecordCount = boardService.totalRecordCount();
+		int totalRecordCount = boardService.totalRecordCount(search);
 		// System.out.println("totalRecordCount : " + totalRecordCount);
 
 		// pagination
@@ -54,12 +61,18 @@ public class BoardController {
 		paginationInfo.setPageSize(10);// 페이징 리스트의 사이즈
 		paginationInfo.setTotalRecordCount(totalRecordCount);// 전체 게시물 건 수
 		System.out.println("이뚱 사랑하는 사람 : " + request.getRemoteAddr());
+		
+		SearchDTO searchDTO = new SearchDTO();
+		searchDTO.setPageNo(paginationInfo.getFirstRecordIndex());
+		searchDTO.setSearch(search);
 
-		List<BoardDTO> list = boardService.boardList(paginationInfo.getFirstRecordIndex());
+		List<BoardDTO> list = boardService.boardList(searchDTO);
 		model.addAttribute("list", list);
 		// 페이징 관련 정보가 있는 paginationInfo 객체를 모델에 반드시 넣어준다.
 		model.addAttribute("paginationInfo", paginationInfo);
 		model.addAttribute("pageNo", currentPageNo);
+		model.addAttribute("search", search);
+		
 
 		return "board";
 	}

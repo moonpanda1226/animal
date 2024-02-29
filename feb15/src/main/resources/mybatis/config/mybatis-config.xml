@@ -12,6 +12,7 @@
   	<typeAlias type="org.sh.dto.MemberDTO" alias="memberDTO"/>
   	<typeAlias type="org.sh.dto.GalleryDTO" alias="galleryDTO"/>
   	<typeAlias type="org.sh.dto.NoticeDTO" alias="notice"/>
+  	<typeAlias type="org.sh.dto.SearchDTO" alias="search"/>
   </typeAliases>
   
   </configuration>
